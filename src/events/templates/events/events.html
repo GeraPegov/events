@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+{% for el in events %}
+    {{ el.name }}
+    {{ el.date }}
+    {{ el.status }}
+    {{ el.place.name }}
+{% endfor %}
+<form method="get" class="booking-form">
+    {% csrf_token %}
+    {{ form.name }}
+    <button class="btn btn-primary mt-3" type="submit">
+        <i class="fas fa-search"></i> Найти мероприятие
+    </button>
+</form>
+</body>
+</html>

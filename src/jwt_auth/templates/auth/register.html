@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Регистрация</title>
+</head>
+<body>
+    <h2>Регистрация</h2>
+    <form class="form-control">
+        {% csrf_token %}
+        {{ form.login }}
+        {{ form.password }}
+        <button type="submit">Зарегистрироваться</button>
+    </form>
+
+<script>
+document.getElementById('registerForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+    
+    const formData = new FormData(this);
+    
+    try {
+        const response = await fetch('', {  // Отправляем на текущий URL
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'  // Для определения AJAX-запроса
+            }
+        });
+        
+        const data = await response.json();
+        
+        if (response.ok) {
+            // Сохраняем токены
+            localStorage.setItem('access_token', data.access);
+            localStorage.setItem('refresh_token', data.refresh);
+            
+            // Перенаправляем после успешной регистрации
+            window.location.href = '/events/';
+        } else {
+            alert('Ошибка: ' + JSON.stringify(data.errors));
+        }
+    } catch (error) {
+        console.error('Ошибка:', error);
+        alert('Ошибка сети');
+    }
+});
+
+// Минимальный перехватчик для API
+const originalFetch = window.fetch;
+window.fetch = async function(url, options = {}) {
+    if (url.startsWith('/api/')) {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            options.headers = {
+                ...options.headers,
+                'Authorization': `Bearer ${token}`
+            };
+        }
+    }
+    return originalFetch(url, options);
+};
+</script>
+</body>
+</html>

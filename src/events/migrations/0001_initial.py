@@ -5,28 +5,49 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     initial = True
 
-    dependencies = [
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name='Place',
+            name="Place",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=100, verbose_name='Название площадки')),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "name",
+                    models.CharField(max_length=100, verbose_name="Название площадки"),
+                ),
             ],
         ),
         migrations.CreateModel(
-            name='Event',
+            name="Event",
             fields=[
-                ('id', models.AutoField(primary_key=True, serialize=False)),
-                ('name', models.CharField(max_length=100, verbose_name='Название мероприятия')),
-                ('date', models.DateTimeField(verbose_name='Дата проведения мероприятия')),
-                ('status', models.CharField(default='open', max_length=100, verbose_name='Текущий статус')),
-                ('place', models.ForeignKey(default=None, on_delete=django.db.models.deletion.CASCADE, to='events.place')),
+                ("id", models.AutoField(primary_key=True, serialize=False)),
+                (
+                    "name",
+                    models.CharField(
+                        max_length=100, verbose_name="Название мероприятия"
+                    ),
+                ),
+                (
+                    "date",
+                    models.DateTimeField(verbose_name="Дата проведения мероприятия"),
+                ),
+                (
+                    "status",
+                    models.CharField(
+                        default="open", max_length=100, verbose_name="Текущий статус"
+                    ),
+                ),
+                (
+                    "place",
+                    models.ForeignKey(
+                        default=None,
+                        on_delete=django.db.models.deletion.CASCADE,
+                        to="events.place",
+                    ),
+                ),
             ],
         ),
     ]

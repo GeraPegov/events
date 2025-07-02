@@ -1,10 +1,13 @@
-from django.forms import Form, TextInput, CharField
+from django.forms import CharField, Form, TextInput
+
 
 class SearchNameForm(Form):
     name = CharField(
-        widget=TextInput(attrs={
-            "class": "form-control",
-            "type": "text",
-            "placeholder": "Название мероприятия",
-        })
+        widget=TextInput(
+            attrs={
+                "class": "form-control",
+                "type": "text",
+                "placeholder": "Название мероприятия",
+            }
+        )
     )

@@ -5,20 +5,26 @@
 </head>
 <body>
     <h2>Регистрация</h2>
-    <form class="form-control">
+    <form method="post" class="form-control" id="registerForm" >
         {% csrf_token %}
         {{ form.login }}
         {{ form.password }}
-        <button type="submit">Зарегистрироваться</button>
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="fas fa-check-circle"></i> Зарегестрироваться
+        </button>
     </form>
-
 <script>
-document.getElementById('registerForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    
+document.addEventListener('DOMContentLoaded', () => {  // Ждем загрузки DOM
+    const form = document.getElementById('registerForm');
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+    form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+
     const formData = new FormData(this);
-    
+    console.log('Отправка запроса...')
     try {
+        console.log('Отправка запроса...');
         const response = await fetch('', {  // Отправляем на текущий URL
             method: 'POST',
             body: formData,
@@ -26,13 +32,14 @@ document.getElementById('registerForm').addEventListener('submit', async functio
                 'X-Requested-With': 'XMLHttpRequest'  // Для определения AJAX-запроса
             }
         });
-        
+        console.log('Статус ответа:', response.status);
+
         const data = await response.json();
         
         if (response.ok) {
             // Сохраняем токены
-            localStorage.setItem('access_token', data.access);
-            localStorage.setItem('refresh_token', data.refresh);
+            localStorage.setItem('access_token', data.access_token);
+            localStorage.setItem('refresh_token', data.refresh_token);
             
             // Перенаправляем после успешной регистрации
             window.location.href = '/events/';
@@ -43,6 +50,7 @@ document.getElementById('registerForm').addEventListener('submit', async functio
         console.error('Ошибка:', error);
         alert('Ошибка сети');
     }
+})
 });
 
 // Минимальный перехватчик для API

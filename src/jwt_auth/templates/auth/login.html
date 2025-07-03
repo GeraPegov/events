@@ -1,57 +1,52 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Вход</title>
+    <title>Авторизация</title>
 </head>
 <body>
-    <h2>Вход</h2>
-    <form id="loginForm">
+    <h2>Авторизация</h2>
+    <form method="post" class="form-control" id="loginForm" >
         {% csrf_token %}
-        <div>
-            <label>Логин:</label>
-            <input type="text" name="login" required>
-        </div>
-        <div>
-            <label>Пароль:</label>
-            <input type="password" name="password" required>
-        </div>
-        <button type="submit">Войти</button>
+        {{ form.login }}
+        {{ form.password }}
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="fas fa-check-circle"></i> Авторизоваться
+        </button>
     </form>
-
-    <script>
-        document.getElementById('loginForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const formData = {
-                login: e.target.login.value,
-                password: e.target.password.value
-            };
-
-            try {
-                const response = await fetch('/api/auth/login/', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRFToken': '{{ csrf_token }}'
-                    },
-                    body: JSON.stringify(formData)
-                });
-
-                const data = await response.json();
-                
-                if (response.ok) {
-                    localStorage.setItem('access_token', data.access);
-                    localStorage.setItem('refresh_token', data.refresh);
-                    alert('Вход выполнен!');
-                    window.location.href = '/events/';
-                } else {
-                    alert('Ошибка: ' + (data.error || JSON.stringify(data)));
-                }
-            } catch (error) {
-                console.error('Ошибка:', error);
-                alert('Ошибка сети');
+<script>
+// 1. Перехватчик для автоматической подстановки токена
+const originalFetch = window.fetch;
+window.fetch = async function(url, options = {}) {
+    // Для защищённых маршрутов
+    if (url.startsWith('/events/')) {
+        const token = localStorage.getItem('access_token');
+        if (!token) {
+            window.location.href = '/login/';
+            return Promise.reject('No auth token');
+        }
+        options.headers = {
+            ...options.headers,
+            'Authorization': `Bearer ${token}`
+        };
+    }
+    
+    // Для авторизации - сохраняем токены из ответа
+    if (url.includes('/auth/login/') || url.includes('/auth/register/')) {
+        const response = await originalFetch(url, options);
+        
+        if (response.ok) {
+            const data = await response.json();
+            if (data.access_token) {
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
             }
-        });
-    </script>
+        }
+        
+        return response; // Пробрасываем ответ дальше
+    }
+    
+    return originalFetch(url, options);
+};
+</script>
 </body>
 </html>

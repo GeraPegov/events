@@ -1,6 +1,6 @@
 from django.forms import Form, CharField, TextInput
 
-class AuthorizationForm(Form):
+class RegistrationForm(Form):
     login = CharField(
         widget=TextInput(
             attrs={
@@ -8,6 +8,7 @@ class AuthorizationForm(Form):
             "type": "text",
             "placeholder": "Логин"
         }))
+    
     password = CharField(   
         widget=TextInput(
             attrs={
@@ -15,14 +16,3 @@ class AuthorizationForm(Form):
                 "type": "text",
                 "placeholder": "Пароль"
         }))
-
-class RefreshTokenForm(Form):
-    refresh_token = CharField(
-        widget=TextInput(
-            attrs={
-                "class": "form-control",
-                "type": "text",
-                "placeholder": "Refresh token"
-            }
-        )
-    )

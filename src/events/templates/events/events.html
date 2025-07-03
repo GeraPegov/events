@@ -18,5 +18,23 @@
         <i class="fas fa-search"></i> Найти мероприятие
     </button>
 </form>
+<script>
+    function fetchWithAuth(url, options = {}) {
+    const token = localStorage.getItem('access_token');
+
+    if (!token) {
+        window.location.href = '/api/auth/register'
+    }
+    options.headers = {
+        ...options.headers,
+        'Authorization': `Bearer ${token}`,
+    };
+    return fetch(url, options);
+}
+fetchWithAuth('http://127.0.0.1:8000/events/')
+    .then(response => response.json())
+    .then(data => console.log(data))
+    .catch(error => console.error('Error:', error));
+</script>
 </body>
 </html>

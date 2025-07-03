@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Регистрация</title>
+</head>
+<body>
+    <h2>Регистрация</h2>
+    <form method="post" action="{% url 'jwt_auth:register-api' %}" id="registerForm">
+        {% csrf_token %}
+        {{ form.login }}
+        {{ form.password }}
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="fas fa-check-circle"></i> Зарегестрироваться
+        </button>
+    </form>
+<script>
+    document.getElementById('registerForm').addEventListener('submit', async (e) => {
+        e.preventDefault(); 
+        const formData = new FormData(e.target);
+        try {
+            const response = await fetch(e.target.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                },
+            });
+            if (response.ok) {
+                const data = await response.json();
+                localStorage.setItem('access_token', data.access_token);
+                localStorage.setItem('refresh_token', data.refresh_token);
+                window.location.href = '/events/';  
+            } else {
+                console.error('Ошибка регистрации:', await response.text());
+            }
+        } catch (error) {
+            console.error('Ошибка сети:', error);
+        }
+    });
+    
+</script>
+    <h2>Авторизация</h2>
+    <form method="post" action="{% url 'jwt_auth:login-api' %}" >
+        {% csrf_token %}
+        {{ form.login }}
+        {{ form.password }}
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="fas fa-check-circle"></i> Зарегестрироваться
+        </button>
+    </form>
+    <h2>Смена токена</h2>
+    <form method="post" action="{% url 'jwt_auth:refresh-api' %}" >
+        {% csrf_token %}
+        {{ form.login }}
+        {{ form.password }}
+        <button type="submit" class="btn btn-success btn-lg">
+            <i class="fas fa-check-circle"></i> Зарегестрироваться
+        </button>
+    </form>
+</body>
+</html>
+
+
+

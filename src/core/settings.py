@@ -29,8 +29,14 @@ ALLOWED_HOSTS = []
 
 
 # Application definition
+CORS_ALLOW_CREDENTIALS = True 
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:8000',
+    'http://127.0.0.1:8000'
+]
 
 INSTALLED_APPS = [
+    "sync.apps.SyncConfighome"
     "home",
     "jwt_auth",
     "rest_framework",
@@ -51,6 +57,8 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
+    "ROTATE_REFRESH_TOKENS": True,
+    "BLACKLIST_AFTER_ROTATION": True,
     "AUTH_COOKIE_HTTPONLY": True,
     "AUTH_COOKIE_NAME": "access_token",
     "AUTH_COOKIE_SAMESITE": "Lax",
@@ -58,6 +66,7 @@ SIMPLE_JWT = {
 }
 
 MIDDLEWARE = [
+    "events.middleware.JWTCookieMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
